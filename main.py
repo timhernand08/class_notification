@@ -6,7 +6,7 @@ from private_info import *
 import smtplib
 from email.message import EmailMessage
 
-CHECK_INTERVAL = 1140 #19 minutes
+CHECK_INTERVAL = 3600 #1 hour in seconds
 
 driver = webdriver.Chrome()
 
@@ -68,6 +68,7 @@ def main():
         except Exception as e:
             print("Error during check: ", e)
         timer()
+        login()
 
     driver.quit()
 
