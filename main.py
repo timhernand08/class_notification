@@ -14,10 +14,10 @@ def login():
     driver.get("https://my.fiu.edu/")
     time.sleep(5)
     driver.find_element(By.LINK_TEXT, "Login to MyFIU").click()
+    time.sleep(5)
     driver.find_element(By.ID, "username").send_keys(USERNAME)
     driver.find_element(By.ID, "password").send_keys(PASSWORD)
     driver.find_element(By.NAME, "submit").click()
-    driver.find_element(By.ID, "rememberLabel").click()
     driver.find_element(By.ID, "push").click()
 
     print("Waiting for DUO 2FA... Complete manually.")
@@ -31,7 +31,7 @@ def check_class():
     time.sleep(5)
     driver.find_element(By.XPATH, "//span[@title='Shopping Cart']/../../..").click()
     time.sleep(5)
-    class_element = driver.find_element(By.XPATH, "//span[starts-with(text(),'COP 4610')]/ancestor::tr")
+    class_element = driver.find_element(By.XPATH, f"//span[starts-with(text(),'{CLASS_CODE}')]/ancestor::tr")
     status = class_element.find_element(By.XPATH, "//td[2]").text
 
     return not "Closed" in status
@@ -47,6 +47,14 @@ def send_notification():
         smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
         smtp.send_message(msg)
 
+def timer():
+    total = CHECK_INTERVAL//60
+    while total > 0:
+        print(f"Time remaining: {total} min")
+        time.sleep(60)
+        total -= 1
+
+
 def main():
     login()
     while True:
@@ -59,7 +67,7 @@ def main():
                 print(f"{CLASS_CODE} is still full. Checking again in {CHECK_INTERVAL//60} minutes")
         except Exception as e:
             print("Error during check: ", e)
-        time.sleep(CHECK_INTERVAL)
+        timer()
 
     driver.quit()
 
